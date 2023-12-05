@@ -1,0 +1,64 @@
+name: Release Generator - Linux
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: environment-lin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build - ${{ matrix.config.os }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - os: ubuntu-22.04
+            name: "Ubuntu GCC-11"
+            artifact: "ubuntu_gcc.7z"
+            build_type: "RelWithDebInfo"
+            cc: "clang-14"
+            cxx: "clang++-14"
+            archiver: "7z a"
+            generators: "Unix Makefiles"
+            build_dir: 'build'
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          
+      - name: Build LuaJit
+        shell: bash
+        run: |
+          cd third_party_libs/luajit
+          sudo make
+          cd ../../
+          cp third_party_libs/luajit/src/libluajit-p.so ./
+          
+      - name: Build lua_compile
+        shell: bash
+        run: |
+          cmake -G "Unix Makefiles" -DDEPENDENCY_LUAJIT_INCLUDE=./third_party_libs/luajit/src/ -DDEPENDENCY_LUAJIT_LIBRARY=./third_party_libs/luajit/src/libluajit-p.so
+          cmake --build ./ --verbose
+          
+      - name: Create Release Files
+        shell: bash
+        run: |
+          mkdir release
+          rsync libluajit-p.so release/
+          rsync lua_compile release/
+          patchelf --set-rpath '$ORIGIN' ./release/lua_compile
+          
+      - name: Upload Release
+        uses: Silverlan/common_actions/release_nightly_binaries@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit: ${{ github.ref_name }}
+
+      - name: Handle Error
+        uses: Silverlan/common_actions/action_handle_error@main
+        if: failure()

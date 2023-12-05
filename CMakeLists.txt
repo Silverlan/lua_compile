@@ -51,6 +51,8 @@ function(add_def DEF)
 	set(DEFINITIONS ${DEFINITIONS} ${DEF} PARENT_SCOPE)
 endfunction(add_def)
 
+link_external_library(luajit)
+
 ##### CONFIGURATION #####
 
 set(PROJ_NAME lua_compile)
@@ -82,10 +84,10 @@ file(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_LIST_DIR}/include/*.hpp"
 )
 add_executable(${PROJ_NAME} ${SRC_FILES})
-if(WIN32)
-	target_compile_options(${PROJ_NAME} PRIVATE /wd4251)
-	target_compile_options(${PROJ_NAME} PRIVATE /wd4996)
-endif()
+#if(WIN32)
+#	target_compile_options(${PROJ_NAME} PRIVATE /wd4251)
+#	target_compile_options(${PROJ_NAME} PRIVATE /wd4996)
+#endif()
 def_vs_filters("${SRC_FILES}")
 
 foreach(LIB IN LISTS LIBRARIES)
