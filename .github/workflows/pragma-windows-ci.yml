@@ -43,7 +43,7 @@ jobs:
       - name: Build lua_compile
         shell: bash
         run: |
-          cmake -G "Unix Makefiles" -DDEPENDENCY_LUAJIT_INCLUDE=./third_party_libs/luajit/src/ -DDEPENDENCY_LUAJIT_LIBRARY=./third_party_libs/luajit/src/lua51.dll
+          cmake -G "Visual Studio 17 2022" -DDEPENDENCY_LUAJIT_INCLUDE=./third_party_libs/luajit/src/ -DDEPENDENCY_LUAJIT_LIBRARY=./third_party_libs/luajit/src/lua51.dll
           cmake --build ./ --verbose
           
       - name: Create Release Files
