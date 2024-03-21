@@ -32,26 +32,33 @@ jobs:
         with:
           submodules: 'recursive'
           
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+          export-path-to-vcvarsall: "vcvarsall_location"
+          
       - name: Build LuaJit
-        shell: bash
+        shell: cmd
         run: |
-          cd third_party_libs/luajit
-          make
-          cd ../../
+          call "%vcvarsall_location%/vcvars64.bat"
+          cd third_party_libs/luajit/src
+          ./msvcbuild.bat
+          cd ../../../
           cp third_party_libs/luajit/src/lua51.dll ./
           
       - name: Build lua_compile
         shell: bash
         run: |
-          cmake -G "Visual Studio 17 2022" -DDEPENDENCY_LUAJIT_INCLUDE=./third_party_libs/luajit/src/ -DDEPENDENCY_LUAJIT_LIBRARY=./third_party_libs/luajit/src/lua51.dll
-          cmake --build ./ --verbose
+          cmake -G "Visual Studio 17 2022" -DDEPENDENCY_LUAJIT_INCLUDE=./third_party_libs/luajit/src/ -DDEPENDENCY_LUAJIT_LIBRARY=./third_party_libs/luajit/src/luajit.lib -DDEPENDENCY_LUA_LIBRARY=./third_party_libs/luajit/src/lua51.lib -S . -B build
+          cd build
+          cmake --build ./ --config Release --verbose
           
       - name: Create Release Files
         shell: bash
         run: |
           mkdir release
-          cp lua51.dll release/
-          cp lua_compile.exe release/
+          cp third_party_libs/luajit/src/lua51.dll release/
+          cp build/Release/lua_compile.exe release/
           
       - name: Install zip
         shell: bash

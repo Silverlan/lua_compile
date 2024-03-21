@@ -12,8 +12,8 @@ extern "C" {
 #include <iostream>
 #include <fstream>
 
-#pragma comment(lib,"E:/projects/pragma/third_party_libs/luajit/src/lua51.lib")
-#pragma comment(lib,"E:/projects/pragma/third_party_libs/luajit/src/luajit.lib")
+// #pragma comment(lib,"E:/projects/pragma/third_party_libs/luajit/src/lua51.lib")
+// #pragma comment(lib,"E:/projects/pragma/third_party_libs/luajit/src/luajit.lib")
 
 static FILE *f_compile = nullptr;
 static int lua_write_binary(lua_State*,unsigned char *str,size_t len,struct luaL_Buffer*)

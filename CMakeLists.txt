@@ -52,6 +52,7 @@ function(add_def DEF)
 endfunction(add_def)
 
 link_external_library(luajit)
+link_external_library(lua)
 
 ##### CONFIGURATION #####
 
