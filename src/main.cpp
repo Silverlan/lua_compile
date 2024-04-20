@@ -85,7 +85,7 @@ int main(int argc,char *argv[])
 		std::cout<<"Unexpected input file name."<<std::endl;
 		return EXIT_FAILURE;
 	}
-	outFile = outFile.substr(0,rpos) +".clua";
+	outFile = outFile.substr(0,rpos) +".luac";
 	std::string err;
 	if(compile_file(l,inFile,outFile,err))
 		std::cout<<"Compiling was successful, compiled script has been saved as '"<<outFile<<"'!"<<std::endl;
